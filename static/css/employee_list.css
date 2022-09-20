@@ -1,0 +1,11 @@
+.table-section {
+    margin-top: 2rem;
+}
+
+a {
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #607EAA;
+}
