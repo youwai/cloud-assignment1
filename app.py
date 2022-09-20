@@ -1,9 +1,21 @@
 from flask import Flask, render_template, request
+from pymysql import connections
 
 app = Flask(__name__)
 
+db_conn = connections.Connection(
+    host = 'hr-db1.cwrevot9vajh.us-east-1.rds.amazonaws.com',
+    port = 3306,
+    user = 'admin',
+    password= 'hrdb12345',
+    db='hr-db1'
+)
+
 @app.route("/")
 def index():
+    cursor = db_conn.cursor()
+    print(cursor)
+
     return render_template('index.html')
 
 @app.route("/employee_list")
