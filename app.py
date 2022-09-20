@@ -59,4 +59,4 @@ def emp_details(emp_id = None):
     return render_template('employee_details.html', emp_id=emp_id)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8080)
