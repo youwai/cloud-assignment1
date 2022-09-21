@@ -16,14 +16,7 @@ db_conn = connections.Connection(
 custombucket = 'jasonsorkeanyung-bucket'
 customregion = 'us-east-1'
 
-# cursor = db_conn.cursor()
-# cursor.execute("USE HRSystem")
-
 # create_table = "CREATE TABLE Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
-
-# cursor.execute(create_table)
-# print('Created table')
-# db_conn.commit()
 
 def read_data_from_rds (emp_id = None):
     cursor = db_conn.cursor()
@@ -60,6 +53,17 @@ def read_data_from_rds (emp_id = None):
 
 @app.route("/")
 def index():
+    cursor = db_conn.cursor()
+
+    alter_table = "ALTER TABLE Employees ADD object_url varchar(100)"
+
+    cursor.execute(alter_table)
+    print('Alter table')
+    db_conn.commit()
+
+    data = read_data_from_rds()
+    print(data)
+
     return render_template('index.html')
 
 @app.route("/employee_list")
