@@ -20,6 +20,22 @@ db_conn = connections.Connection(
 # print('Created table')
 # db_conn.commit()
 
+def read_data_from_rds (emp_id = None):
+    cursor = db_conn.cursor()
+    cursor.execute("USE HRSystem")
+
+    if emp_id == None:
+        cursor.execute("Select * from Employees")
+    else:
+        cursor.execute("Select * from Employees where emp_id = %s", (emp_id))
+
+    result = cursor.fetchall()
+    print(result)
+    print("attempt to fetch data")
+
+    return result
+
+
 @app.route("/")
 def index():
     return render_template('index.html')
@@ -59,10 +75,8 @@ def insert():
         cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
         db_conn.commit()
 
-        cursor.execute("Select * from Employees")
-        result = cursor.fetchall()
-        print(result)
-        print("attempt to fetch data")
+        data = read_data_from_rds()
+        print('From outside >> ', data)
 
         cursor.close()
 
