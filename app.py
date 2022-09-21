@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from pymysql import connections
+import boto3
 from datetime import date
 
 app = Flask(__name__)
@@ -12,8 +13,8 @@ db_conn = connections.Connection(
     db = 'HRSystem'
 )
 
-bucket = 'jasonsorkeanyung-bucket'
-region = 'us-east-1'
+custombucket = 'jasonsorkeanyung-bucket'
+customregion = 'us-east-1'
 
 # cursor = db_conn.cursor()
 # cursor.execute("USE HRSystem")
@@ -85,21 +86,45 @@ def insert():
 
         print(emp_image)
 
-        # try:
-        #     cursor = db_conn.cursor()
-        #     insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        if emp_image.filename == "":
+            return "Please select a file"
 
-        #     cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
-        #     db_conn.commit()
+        try:
+            cursor = db_conn.cursor()
+            # insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-        # except Exception as e:
-        #     return str(e)
+            # cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
+            # db_conn.commit()
+
+            emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
+            s3 = boto3.resource('s3')
+
+            try:
+                print("Data inserted in MySQL RDS... uploading imag eto S3...")
+                s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image)
+                bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+                s3_location = (bucket_location['LocationConstraint'])
+
+                if s3_location is None:
+                    s3_location = ''
+                else:
+                    s3_location = '-' + s3_location
+
+                object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+                    s3_location,
+                    custombucket,
+                    emp_image_file_name_in_s3)
+
+
+            except Exception as e:
+                return str(e)
+
+        finally:
+            cursor.close()
+
+        print(object_url)
 
         data = read_data_from_rds()
-
-        print(data)
-
-        # cursor.close()
 
     return render_template('employee_list.html', data = data)
 
