@@ -19,6 +19,11 @@ def index():
     cursor.commit()
     print('Created table')
 
+    cursor.execute("Select * from Employee")
+    result = cursor.fetchall()
+    print(result)
+    print("attempt to fetch data")
+
     return render_template('index.html')
 
 @app.route("/employee_list")
