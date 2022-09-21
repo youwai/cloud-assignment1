@@ -13,13 +13,13 @@ db_conn = connections.Connection(
 @app.route("/")
 def index():
     cursor = db_conn.cursor()
-    create_table = "create table IF NOT EXIST Employee (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date), primary key (emp_id))"
+    create_table = "CREATE TABLE IF NOT EXIST Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
 
     cursor.execute(create_table)
     cursor.commit()
     print('Created table')
 
-    cursor.execute("Select * from Employee")
+    cursor.execute("Select * from Employees")
     result = cursor.fetchall()
     print(result)
     print("attempt to fetch data")
