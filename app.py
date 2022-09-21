@@ -18,6 +18,14 @@ customregion = 'us-east-1'
 
 # create_table = "CREATE TABLE Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
 
+# cursor = db_conn.cursor()
+
+#     delete_record = "DELETE FROM Employees"
+
+#     cursor.execute(delete_record)
+#     print('Delete records')
+#     db_conn.commit()
+
 def read_data_from_rds (emp_id = None):
     cursor = db_conn.cursor()
 
@@ -42,7 +50,8 @@ def read_data_from_rds (emp_id = None):
             'position': record[6],
             'department': record[7],
             'salary': record[8],
-            'created_date': record[9]
+            'created_date': record[9],
+            'image_url': record[10]
         }
 
         result.append(temp)
@@ -52,17 +61,6 @@ def read_data_from_rds (emp_id = None):
 
 @app.route("/")
 def index():
-    cursor = db_conn.cursor()
-
-    delete_record = "DELETE FROM Employees"
-
-    cursor.execute(delete_record)
-    print('Delete records')
-    db_conn.commit()
-
-    data = read_data_from_rds()
-    print(data)
-
     return render_template('index.html')
 
 @app.route("/employee_list")
