@@ -96,7 +96,11 @@ def insert():
 @app.route('/emp_details')
 @app.route('/emp_details/<emp_id>')
 def emp_details(emp_id = None):
-    return render_template('employee_details.html', emp_id=emp_id)
+    data = read_data_from_rds(emp_id)
+
+    result = data[0]
+
+    return render_template('employee_details.html', result=result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
