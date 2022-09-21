@@ -29,9 +29,27 @@ def read_data_from_rds (emp_id = None):
     else:
         cursor.execute("Select * from Employees where emp_id = %s", (emp_id))
 
-    result = cursor.fetchall()
-    print(result)
+    records = cursor.fetchall()
+    print(records)
     print("attempt to fetch data")
+
+    result = []
+
+    for record in records:
+        temp = {
+            'emp_id': record[0],
+            'name': record[1],
+            'ic_no': record[2],
+            'gender': record[3],
+            'dob': record[4],
+            'age': record[5],
+            'position': record[6],
+            'department': record[7],
+            'salary': record[8],
+            'created_date': record[9]
+        }
+
+        result.append(temp)
 
     return result
 
@@ -42,13 +60,7 @@ def index():
 
 @app.route("/employee_list")
 def employee_list():
-    data = [{'emp_id': '0001', 'name': 'You Wai', 'date': '31-MAY-2022'}, {'emp_id': '0002', 'name': 'You Wai', 'date': '31-MAY-2022'}]
-
-    cursor = db_conn.cursor()
-    cursor.execute("Select * from Employees")
-    result = cursor.fetchall()
-    print(result)
-    print("attempt to fetch data")
+    data = read_data_from_rds()
 
     return render_template('employee_list.html', data=data)
     
@@ -76,12 +88,10 @@ def insert():
         db_conn.commit()
 
         data = read_data_from_rds()
-        print('From outside >> ', data)
-        print(type(data))
 
         cursor.close()
 
-    return render_template('employee_list.html')
+    return render_template('employee_list.html', data = data)
 
 @app.route('/emp_details')
 @app.route('/emp_details/<emp_id>')

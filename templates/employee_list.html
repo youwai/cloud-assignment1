@@ -37,7 +37,6 @@
                   <th scope="col">Employee ID</th>
                   <th scope="col">Employee Name</th>
                   <th scope="col">Created Date</th>
-                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -45,7 +44,7 @@
                 <tr>
                   <td><a href="#" onclick="emp_click(this)">{{rec.emp_id}}</a></td>
                   <td>{{rec.name}}</td>
-                  <td>{{rec.date}}</td>
+                  <td>{{rec.created_date}}</td>
                 </tr>
                 {%endfor%}
               </tbody>
