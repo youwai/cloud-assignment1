@@ -81,9 +81,9 @@ def insert():
         position = request.form['position']
         department = request.form['department']
         salary = request.form['salary']
-        emp_image = request.files['emp_image']
+        # emp_image = request.files['emp_image']
 
-        print(emp_image)
+        print(emp_id)
 
         # try:
         #     cursor = db_conn.cursor()
@@ -96,6 +96,8 @@ def insert():
         #     return str(e)
 
         data = read_data_from_rds()
+
+        print(data)
 
         # cursor.close()
 
