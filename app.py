@@ -53,6 +53,7 @@ def insert():
         # image = request.files['image']
 
         cursor = db_conn.cursor()
+        cursor.execute("USE HRSystem")
         insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
         cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
