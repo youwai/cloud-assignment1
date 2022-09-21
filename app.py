@@ -12,6 +12,9 @@ db_conn = connections.Connection(
     db = 'HRSystem'
 )
 
+bucket = 'jasonsorkeanyung-bucket'
+region = 'us-east-1'
+
 # cursor = db_conn.cursor()
 # cursor.execute("USE HRSystem")
 
@@ -78,18 +81,23 @@ def insert():
         position = request.form['position']
         department = request.form['department']
         salary = request.form['salary']
-        # image = request.files['image']
+        emp_image = request.files['emp_image']
 
-        cursor = db_conn.cursor()
-        cursor.execute("USE HRSystem")
-        insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        print(emp_image)
 
-        cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
-        db_conn.commit()
+        # try:
+        #     cursor = db_conn.cursor()
+        #     insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+        #     cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
+        #     db_conn.commit()
+
+        # except Exception as e:
+        #     return str(e)
 
         data = read_data_from_rds()
 
-        cursor.close()
+        # cursor.close()
 
     return render_template('employee_list.html', data = data)
 
