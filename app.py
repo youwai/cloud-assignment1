@@ -58,6 +58,11 @@ def insert():
         cursor.execute(insert_sql, emp_id, name, ic_no, gender, dob, age, position, department, salary, today)
         db_conn.commit()
 
+        cursor.execute("Select * from Employees")
+        result = cursor.fetchall()
+        print(result)
+        print("attempt to fetch data")
+
         cursor.close()
 
     return render_template('employee_list.html')
