@@ -55,7 +55,7 @@ def insert():
         cursor = db_conn.cursor()
         insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-        cursor.execute(insert_sql, emp_id, name, ic_no, gender, dob, age, position, department, salary, today)
+        cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
         db_conn.commit()
 
         cursor.execute("Select * from Employees")
