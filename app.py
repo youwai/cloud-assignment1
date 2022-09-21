@@ -8,7 +8,8 @@ db_conn = connections.Connection(
     host = 'hr-db1.cwrevot9vajh.us-east-1.rds.amazonaws.com',
     port = 3306,
     user = 'admin',
-    password= 'hrdb12345'
+    password= 'hrdb12345',
+    db = 'HRSystem'
 )
 
 # cursor = db_conn.cursor()
@@ -22,7 +23,6 @@ db_conn = connections.Connection(
 
 def read_data_from_rds (emp_id = None):
     cursor = db_conn.cursor()
-    cursor.execute("USE HRSystem")
 
     if emp_id == None:
         cursor.execute("Select * from Employees")
@@ -77,6 +77,7 @@ def insert():
 
         data = read_data_from_rds()
         print('From outside >> ', data)
+        print(type(data))
 
         cursor.close()
 
