@@ -17,8 +17,10 @@ def index():
 
     cursor.execute("CREATE DATABASE HRSystem")
     print(cursor)
+    cursor.commit()
     cursor.execute(create_table)
     print('Created table')
+    cursor.commit()
 
     cursor.execute("Select * from Employees")
     result = cursor.fetchall()
