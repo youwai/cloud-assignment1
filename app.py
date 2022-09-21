@@ -28,7 +28,6 @@ def read_data_from_rds (emp_id = None):
 
     records = cursor.fetchall()
     print(records)
-    print("attempt to fetch data")
 
     result = []
 
@@ -55,10 +54,10 @@ def read_data_from_rds (emp_id = None):
 def index():
     cursor = db_conn.cursor()
 
-    alter_table = "ALTER TABLE Employees ADD object_url varchar(100)"
+    delete_record = "DELETE FROM Employees"
 
-    cursor.execute(alter_table)
-    print('Alter table')
+    cursor.execute(delete_record)
+    print('Delete records')
     db_conn.commit()
 
     data = read_data_from_rds()
@@ -95,10 +94,6 @@ def insert():
 
         try:
             cursor = db_conn.cursor()
-            # insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
-            # cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today))
-            # db_conn.commit()
 
             emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
             s3 = boto3.resource('s3')
@@ -122,6 +117,11 @@ def insert():
 
             except Exception as e:
                 return str(e)
+
+            insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+            cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today, object_url))
+            db_conn.commit()
 
         finally:
             cursor.close()
