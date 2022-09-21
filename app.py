@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from pymysql import connections
+from datetime import date
 
 app = Flask(__name__)
 
@@ -10,31 +11,35 @@ db_conn = connections.Connection(
     password= 'hrdb12345'
 )
 
+# cursor = db_conn.cursor()
+# cursor.execute("USE HRSystem")
+
+# create_table = "CREATE TABLE Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
+
+# cursor.execute(create_table)
+# print('Created table')
+# db_conn.commit()
+
 @app.route("/")
 def index():
-    cursor = db_conn.cursor()
-    create_table = "CREATE TABLE Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
-
-    cursor.execute("USE HRSystem")
-    cursor.execute(create_table)
-    print('Created table')
-    db_conn.commit()
-
-    cursor.execute("Select * from Employees")
-    result = cursor.fetchall()
-    print(result)
-    print("attempt to fetch data")
-
     return render_template('index.html')
 
 @app.route("/employee_list")
 def employee_list():
     data = [{'emp_id': '0001', 'name': 'You Wai', 'date': '31-MAY-2022'}, {'emp_id': '0002', 'name': 'You Wai', 'date': '31-MAY-2022'}]
 
+    cursor = db_conn.cursor()
+    cursor.execute("Select * from Employees")
+    result = cursor.fetchall()
+    print(result)
+    print("attempt to fetch data")
+
     return render_template('employee_list.html', data=data)
     
 @app.route("/insert", methods=['post'])
 def insert():
+    today = date.today()
+
     if request.method == 'POST':
         emp_id = request.form['emp_id']
         name = request.form['name']
@@ -45,20 +50,15 @@ def insert():
         position = request.form['position']
         department = request.form['department']
         salary = request.form['salary']
-        image = request.form['image']
+        # image = request.files['image']
 
-        data = {
-            'emp_id': emp_id,
-            'name': name,
-            'ic_no':ic_no,
-            'gender': gender,
-            'dob': dob,
-            'age': age,
-            'position': position,
-            'department': department,
-            'salary': salary,
-            'image': image
-        }
+        cursor = db_conn.cursor()
+        insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+        cursor.execute(insert_sql, emp_id, name, ic_no, gender, dob, age, position, department, salary, today)
+        db_conn.commit()
+
+        cursor.close()
 
     return render_template('employee_list.html')
 
