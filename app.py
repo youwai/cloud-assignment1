@@ -6,48 +6,47 @@ from datetime import date
 
 app = Flask(__name__)
 
-db_conn = connections.Connection(
-    host = customhost,
-    port = 3306,
-    user = customuser,
-    password= custompass,
-    db = customdb
-)
-
 custombucket = custombucketname
 customregion = customregionname
 
 def read_data_from_rds (emp_id = None):
-    cursor = db_conn.cursor()
+    with connections.Connection(
+        host=customhost,
+        port=3306,
+        user=customuser,
+        password=custompass,
+        db=customdb
+    ) as db_conn:
+        cursor = db_conn.cursor()
 
-    if emp_id == None:
-        cursor.execute("Select * from Employees")
-    else:
-        cursor.execute("Select * from Employees where emp_id = %s", (emp_id))
+        if emp_id == None:
+            cursor.execute("Select * from Employees")
+        else:
+            cursor.execute("Select * from Employees where emp_id = %s", (emp_id))
 
-    records = cursor.fetchall()
-    print(records)
+        records = cursor.fetchall()
+        print(records)
 
-    result = []
+        result = []
 
-    for record in records:
-        temp = {
-            'emp_id': record[0],
-            'name': record[1],
-            'ic_no': record[2],
-            'gender': record[3],
-            'dob': record[4],
-            'age': record[5],
-            'position': record[6],
-            'department': record[7],
-            'salary': record[8],
-            'created_date': record[9],
-            'image_url': record[10]
-        }
+        for record in records:
+            temp = {
+                'emp_id': record[0],
+                'name': record[1],
+                'ic_no': record[2],
+                'gender': record[3],
+                'dob': record[4],
+                'age': record[5],
+                'position': record[6],
+                'department': record[7],
+                'salary': record[8],
+                'created_date': record[9],
+                'image_url': record[10]
+            }
 
-        result.append(temp)
+            result.append(temp)
 
-    return result
+        return result
 
 
 @app.route("/")
@@ -137,18 +136,26 @@ def emp_details(emp_id = None):
 
 @app.route('/delete_emp/<emp_id>')
 def delete_emp(emp_id = None):
-    cursor = db_conn.cursor()
-    delete_emp = "DELETE FROM Employees WHERE emp_id = %s"
-    
-    cursor.execute(delete_emp, (emp_id))
+    with connections.Connection(
+        host=customhost,
+        port=3306,
+        user=customuser,
+        password=custompass,
+        db=customdb
+    ) as db_conn:
 
-    db_conn.commit()
+        cursor = db_conn.cursor()
+        delete_emp = "DELETE FROM Employees WHERE emp_id = %s"
+        
+        cursor.execute(delete_emp, (emp_id))
 
-    cursor.close()
+        db_conn.commit()
 
-    print('Deleted ', emp_id)
+        cursor.close()
 
-    return redirect(url_for('employee_list'))
+        print('Deleted ', emp_id)
+
+        return redirect(url_for('employee_list'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
