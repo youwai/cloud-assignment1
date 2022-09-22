@@ -46,7 +46,7 @@
                   <td><a href="#" onclick="emp_click(this)">{{rec.emp_id}}</a></td>
                   <td>{{rec.name}}</td>
                   <td>{{rec.created_date}}</td>
-                  <td><a href="/delete_emp/{{rec.emp_id}}">Delete</a></td>
+                  <td><a href="/delete_emp/{{rec.emp_id}}" class="delete_option">Delete</a></td>
                 </tr>
                 {%endfor%}
               </tbody>

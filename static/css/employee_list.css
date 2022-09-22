@@ -9,3 +9,7 @@ a {
 a:hover {
     color: #607EAA;
 }
+
+.delete_option {
+    color: #FF6666;
+}
