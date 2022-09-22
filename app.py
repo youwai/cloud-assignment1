@@ -62,62 +62,70 @@ def employee_list():
     
 @app.route("/insert", methods=['post'])
 def insert():
-    today = date.today()
+    with connections.Connection(
+        host=customhost,
+        port=3306,
+        user=customuser,
+        password=custompass,
+        db=customdb
+    ) as db_conn:
 
-    if request.method == 'POST':
-        emp_id = request.form['emp_id']
-        name = request.form['name']
-        ic_no = request.form['ic_no']
-        gender = request.form['gender']
-        dob = request.form['dob']
-        age = request.form['age']
-        position = request.form['position']
-        department = request.form['department']
-        salary = request.form['salary']
-        emp_image = request.files['emp_image']
+        today = date.today()
 
-        print(emp_image)
+        if request.method == 'POST':
+            emp_id = request.form['emp_id']
+            name = request.form['name']
+            ic_no = request.form['ic_no']
+            gender = request.form['gender']
+            dob = request.form['dob']
+            age = request.form['age']
+            position = request.form['position']
+            department = request.form['department']
+            salary = request.form['salary']
+            emp_image = request.files['emp_image']
 
-        if emp_image.filename == "":
-            return "Please select a file"
+            print(emp_image)
 
-        try:
-            cursor = db_conn.cursor()
-
-            emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
-            s3 = boto3.resource('s3')
+            if emp_image.filename == "":
+                return "Please select a file"
 
             try:
-                print("Data inserted in MySQL RDS... uploading imag eto S3...")
-                s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image)
-                bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
-                s3_location = (bucket_location['LocationConstraint'])
+                cursor = db_conn.cursor()
 
-                if s3_location is None:
-                    s3_location = ''
-                else:
-                    s3_location = '-' + s3_location
+                emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
+                s3 = boto3.resource('s3')
 
-                object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
-                    s3_location,
-                    custombucket,
-                    emp_image_file_name_in_s3)
+                try:
+                    print("Data inserted in MySQL RDS... uploading imag eto S3...")
+                    s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image)
+                    bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+                    s3_location = (bucket_location['LocationConstraint'])
+
+                    if s3_location is None:
+                        s3_location = ''
+                    else:
+                        s3_location = '-' + s3_location
+
+                    object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+                        s3_location,
+                        custombucket,
+                        emp_image_file_name_in_s3)
 
 
-            except Exception as e:
-                return str(e)
+                except Exception as e:
+                    return str(e)
 
-            insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                insert_sql = "INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-            cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today, object_url))
-            db_conn.commit()
+                cursor.execute(insert_sql, (emp_id, name, ic_no, gender, dob, age, position, department, salary, today, object_url))
+                db_conn.commit()
 
-        finally:
-            cursor.close()
+            finally:
+                cursor.close()
 
-        print(object_url)
+            print(object_url)
 
-    return redirect(url_for('employee_list'))
+        return redirect(url_for('employee_list'))
 
 @app.route('/emp_details/<emp_id>')
 def emp_details(emp_id = None):
