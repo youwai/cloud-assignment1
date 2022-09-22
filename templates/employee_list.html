@@ -37,6 +37,7 @@
                   <th scope="col">Employee ID</th>
                   <th scope="col">Employee Name</th>
                   <th scope="col">Created Date</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -45,6 +46,7 @@
                   <td><a href="#" onclick="emp_click(this)">{{rec.emp_id}}</a></td>
                   <td>{{rec.name}}</td>
                   <td>{{rec.created_date}}</td>
+                  <td><a href="/delete_emp/{{rec.emp_id}}">Delete</a></td>
                 </tr>
                 {%endfor%}
               </tbody>

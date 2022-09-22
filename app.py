@@ -1,30 +1,21 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from pymysql import connections
 import boto3
+from config import *
 from datetime import date
 
 app = Flask(__name__)
 
 db_conn = connections.Connection(
-    host = 'hr-db1.cwrevot9vajh.us-east-1.rds.amazonaws.com',
+    host = customhost,
     port = 3306,
-    user = 'admin',
-    password= 'hrdb12345',
-    db = 'HRSystem'
+    user = customuser,
+    password= custompass,
+    db = customdb
 )
 
-custombucket = 'jasonsorkeanyung-bucket'
-customregion = 'us-east-1'
-
-# create_table = "CREATE TABLE Employees (emp_id varchar(10), name varchar(100), ic_no varchar(50), gender varchar(10), dob Date, age int(2), position varchar(50), department varchar(20), salary double(10,2), created_date Date, primary key (emp_id))"
-
-# cursor = db_conn.cursor()
-
-#     delete_record = "DELETE FROM Employees"
-
-#     cursor.execute(delete_record)
-#     print('Delete records')
-#     db_conn.commit()
+custombucket = custombucketname
+customregion = customregionname
 
 def read_data_from_rds (emp_id = None):
     cursor = db_conn.cursor()
@@ -138,6 +129,21 @@ def emp_details(emp_id = None):
     result = data[0]
 
     return render_template('employee_details.html', result=result)
+
+@app.route('/delete_emp/<emp_id>')
+def delete_emp(emp_id = None):
+    cursor = db_conn.cursor()
+    delete_emp = "DELETE FROM Employees WHERE emp_id = %s"
+    
+    # cursor.execute(delete_emp, (emp_id))
+
+    # db_conn.commit()
+
+    cursor.close()
+
+    print('Deleting ', emp_id)
+
+    return redirect(url_for('emp_details'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
