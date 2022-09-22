@@ -11,8 +11,14 @@ birthdayInput.addEventListener("change", () => {
     }
 
     const age = today.getFullYear() - birthday.getFullYear();
-    console.log(age);
-    ageInput.value = age;  
+
+    if(age < 18) {
+        window.alert("We can't hire underage employees");
+        birthdayInput.value = '';
+    }
+    else {
+        ageInput.value = age;
+    }
 });
 
 const cancelBtn = document.getElementsByClassName('cancel-btn')[0];
