@@ -117,9 +117,7 @@ def insert():
 
         print(object_url)
 
-        data = read_data_from_rds()
-
-    return render_template('employee_list.html', data = data)
+    return redirect(url_for('employee_list'))
 
 @app.route('/emp_details/<emp_id>')
 def emp_details(emp_id = None):
