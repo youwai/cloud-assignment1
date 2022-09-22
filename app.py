@@ -121,7 +121,6 @@ def insert():
 
     return render_template('employee_list.html', data = data)
 
-@app.route('/emp_details')
 @app.route('/emp_details/<emp_id>')
 def emp_details(emp_id = None):
     data = read_data_from_rds(emp_id)
@@ -135,15 +134,15 @@ def delete_emp(emp_id = None):
     cursor = db_conn.cursor()
     delete_emp = "DELETE FROM Employees WHERE emp_id = %s"
     
-    # cursor.execute(delete_emp, (emp_id))
+    cursor.execute(delete_emp, (emp_id))
 
-    # db_conn.commit()
+    db_conn.commit()
 
     cursor.close()
 
-    print('Deleting ', emp_id)
+    print('Deleted ', emp_id)
 
-    return redirect(url_for('emp_details'))
+    return redirect(url_for('employee_list'))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
